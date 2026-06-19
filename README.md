@@ -1,6 +1,8 @@
 <img src="https://github.com/user-attachments/assets/73c3e46f-a74a-4d96-9c4f-ae30f28378be" />
 
-# 240-MP
+# 240-MP (Custom Fork)
+
+> This is a fork of [anthonycaccese/240-MP](https://github.com/anthonycaccese/240-MP) with added Bluetooth audio, Wi-Fi/Network management, and additional input support.
 
 240-MP is a retro VCR style frontend to play content on [Raspberry Pi](https://github.com/anthonycaccese/240-MP/wiki/Hardware-Testing) (preferably hooked up to a CRT TV). 
 
@@ -54,10 +56,26 @@ Watch on YouTube: https://youtu.be/r-gylGDoELY
 - Mix video with a different audio track
 - Loops forever until you stop it
 
+### Bluetooth Module (Fork Addition)
+- Scan for and pair Bluetooth audio devices (speakers, headphones)
+- View and manage paired devices
+- Audio automatically routes to Bluetooth when connected, falls back to HDMI when disconnected
+- Powered by PipeWire + WirePlumber (installed automatically by `install.sh`)
+- Accessible from Settings > Modules > Bluetooth
+
+### Network Module (Fork Addition)
+- Scan and connect to Wi-Fi networks
+- WPA/WPA2 password entry
+- Manual Wi-Fi configuration
+- Ethernet configuration
+- Uses NetworkManager (`nmcli`) under the hood
+- Accessible from Settings > Modules > Network
+
 ### Global
 - [Color Schemes](https://github.com/anthonycaccese/240-MP/wiki/Customizations)
 - [Keyboard & Controller](https://github.com/anthonycaccese/240-MP/wiki/Input) input support
 - Media Keys during video playback (volume +/-, mute, play/pause, stop, seek, next chapter, previous chapter)
+- Gamepad X/Y buttons mapped to Option1/Option2 actions
 
 ## Install 
 - [On a Raspberry Pi](INSTALL.md#on-a-raspberry-pi)
