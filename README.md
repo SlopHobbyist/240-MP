@@ -1,8 +1,19 @@
-<img src="https://github.com/user-attachments/assets/73c3e46f-a74a-4d96-9c4f-ae30f28378be" />
+### This is a slop fork please don't use this
+### Real project here: https://github.com/anthonycaccese/240-MP
+
+> Dis fork adds Bluetooth audio support and Bluetooth/Wifi settings panels. Now noobs never have to use the CLI to use this software.
+
+## Disclosure
+
+> **Note**: All changes made in this **FORK** were written by AI (Claude Code: Sonnet 4.6, and Antigravity: Gemini 3 Pro (High)). All written code, architecture decisions, and implementation details were generated through AI assistance. Don't use this fork or merge any of these changes, this code sucks.
+>
+> I am a strong advocate for never mixing generated code into real repos.
+> Projects should always clearly disclose as such.
+
 
 # 240-MP (Custom Fork)
 
-> This is a fork of [anthonycaccese/240-MP](https://github.com/anthonycaccese/240-MP) with added Bluetooth audio, Wi-Fi/Network management, and additional input support.
+<img src="https://github.com/user-attachments/assets/73c3e46f-a74a-4d96-9c4f-ae30f28378be" />
 
 240-MP is a retro VCR style frontend to play content on [Raspberry Pi](https://github.com/anthonycaccese/240-MP/wiki/Hardware-Testing) (preferably hooked up to a CRT TV). 
 
