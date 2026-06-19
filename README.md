@@ -10,6 +10,10 @@
 > I am a strong advocate for never mixing generated code into real repos.
 > Projects should always clearly disclose as such.
 
+Can install/update with
+`bash <(curl -fsSL https://raw.githubusercontent.com/SlopHobbyist/240-MP/main/scripts/install-from-source.sh)`
+(untested) (builds from source instead of grabbing tarball like regular verison)
+
 
 # 240-MP (Custom Fork)
 
