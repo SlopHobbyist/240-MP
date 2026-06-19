@@ -91,7 +91,8 @@ sudo apt-get install -y \
   libqt6svg6 qt6-svg-dev qt6-svg-plugins qt6-wayland \
   libdrm-dev libxkbcommon-dev libssl-dev \
   libsdl2-dev \
-  mpv
+  mpv \
+  pipewire-audio libspa-0.2-bluetooth pulseaudio-utils
 ```
 
 `mpv` is the playback engine — 240-MP launches it as a subprocess. No libmpv build dependency is required.

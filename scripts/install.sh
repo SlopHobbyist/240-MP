@@ -49,13 +49,33 @@ sudo apt-get install -y \
     qml6-module-qtquick-window \
     qml6-module-qtquick-effects \
     libsdl2-2.0-0 \
-    mpv
+    mpv \
+    pipewire-audio \
+    libspa-0.2-bluetooth \
+    pulseaudio-utils
 
 # ── udev rule: allow tty group to open /dev/tty0 for VT switching ─────────────
 echo 'KERNEL=="tty0", GROUP="tty", MODE="0620"' \
     | sudo tee /etc/udev/rules.d/99-240mp-tty.rules > /dev/null
 sudo udevadm control --reload-rules
 sudo udevadm trigger /dev/tty0
+
+# ── polkit: let netdev group manage NetworkManager (wifi scan, connect, forget)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+sudo cp "${SCRIPT_DIR}/50-240mp-networkmanager.rules" \
+    /etc/polkit-1/rules.d/50-240mp-networkmanager.rules
+
+# ── Bluetooth audio: WirePlumber config for headless setups ───────────────
+# On Pi OS Lite (no desktop / no logind seat), WirePlumber's Bluetooth
+# monitor won't activate without disabling seat monitoring.
+sudo mkdir -p /etc/wireplumber/wireplumber.conf.d
+sudo tee /etc/wireplumber/wireplumber.conf.d/disable-seat-monitoring.conf > /dev/null << 'WPCONF'
+wireplumber.profiles = {
+  main = {
+    monitor.bluez.seat-monitoring = disabled
+  }
+}
+WPCONF
 
 # ── Download tarball ───────────────────────────────────────────────────────────
 echo "Downloading ${TARBALL}..."
@@ -111,7 +131,9 @@ else
         done
     fi
     if [ -n "$KMS_CARD" ] && [ -e "/dev/dri/$KMS_CARD" ]; then
-        KMS_CONF="${XDG_RUNTIME_DIR:-/tmp}/240mp-kms.json"
+        KMS_DIR="${XDG_RUNTIME_DIR:-/tmp}"
+        [ -d "$KMS_DIR" ] || KMS_DIR="/tmp"
+        KMS_CONF="${KMS_DIR}/240mp-kms.json"
         printf '{ "device": "/dev/dri/%s" }\n' "$KMS_CARD" > "$KMS_CONF"
         export QT_QPA_EGLFS_KMS_CONFIG="$KMS_CONF"
     fi
@@ -132,10 +154,20 @@ if [[ "${REPLY}" =~ ^[Yy]$ ]]; then
     read -r -p "Run service as user [default: pi]: " SERVICE_USER
     SERVICE_USER="${SERVICE_USER:-pi}"
 
+    SERVICE_UID=$(id -u "${SERVICE_USER}" 2>/dev/null || echo 1000)
+
+    # Ensure the user's systemd instance starts at boot (needed for PipeWire
+    # to run without a login session on headless setups).
+    if ! sudo loginctl enable-linger "${SERVICE_USER}"; then
+        echo "WARNING: loginctl enable-linger failed. 240-MP may not start at boot."
+        echo "Run manually after reboot: sudo loginctl enable-linger ${SERVICE_USER}"
+    fi
+
     sudo tee "${SYSTEMD_SERVICE}" > /dev/null << UNIT
 [Unit]
 Description=240-MP Media Player
-After=multi-user.target sound.target
+After=multi-user.target sound.target user-runtime-dir@${SERVICE_UID}.service
+Wants=user-runtime-dir@${SERVICE_UID}.service
 
 [Service]
 Type=simple
@@ -146,6 +178,7 @@ Environment=QT_QPA_PLATFORM=eglfs
 Environment=QT_QPA_EGLFS_ALWAYS_SET_MODE=1
 Environment=QT_QPA_EGLFS_KMS_ATOMIC=1
 Environment=QML2_IMPORT_PATH=/usr/lib/aarch64-linux-gnu/qt6/qml
+Environment=XDG_RUNTIME_DIR=/run/user/${SERVICE_UID}
 Environment=MP240_AUTOSTART=1
 ExecStartPre=+-/usr/bin/systemctl stop 240mp-terminal.service
 ExecStart=${LAUNCHER}
@@ -184,7 +217,8 @@ Description=240-MP exit-to-terminal login shell
 
 [Service]
 Type=idle
-ExecStart=-/sbin/agetty --noclear tty1 linux
+ExecStartPre=-/usr/bin/chvt 1
+ExecStart=-/sbin/agetty tty1 linux
 StandardInput=tty
 StandardOutput=tty
 TTYPath=/dev/tty1

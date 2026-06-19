@@ -28,6 +28,8 @@ add_executable(240mp
     src/modules/local_files/LocalFilesBackend.cpp
     src/modules/plex/PlexBackend.cpp
     src/modules/ambient_mode/AmbientModeBackend.cpp
+    src/modules/network/NetworkBackend.cpp
+    src/modules/bluetooth/BluetoothBackend.cpp
     src/player/MpvController.cpp
     src/input/InputManager.cpp
     $<$<BOOL:${APPLE}>:src/macos_utils.mm>

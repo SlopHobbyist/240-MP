@@ -196,6 +196,36 @@ At this point you can type `240mp` at any time to start up the app.  And if you 
     2. type `sudo reboot` to reboot and start up the device from scratch (which will also restart the autostart service)
     3. type `240mp` which will relaunch the app unmanaged in your shell; here the Quit dialog shows the plain Yes/No menu and selecting Yes will just return you to the shell rather than powering off
 
+### Bluetooth Audio
+
+240-MP can connect to Bluetooth speakers and headphones via the built-in Bluetooth module. When a Bluetooth audio device is connected, audio will automatically route to it; when it's disconnected, audio falls back to HDMI.
+
+**If you used `install.sh`** (step 5 above), the Bluetooth audio dependencies are already installed and configured — no extra steps needed. Just pair a speaker from the Bluetooth module in 240-MP.
+
+**If you installed manually** or are upgrading an older install, you'll need to set up the PipeWire audio stack:
+
+```bash
+sudo apt install -y pipewire-audio libspa-0.2-bluetooth pulseaudio-utils
+systemctl --user enable --now pipewire pipewire-pulse wireplumber
+```
+
+On headless setups (Pi OS Lite / no desktop), WirePlumber also needs a config override to activate Bluetooth without a logind seat:
+
+```bash
+sudo mkdir -p /etc/wireplumber/wireplumber.conf.d
+sudo tee /etc/wireplumber/wireplumber.conf.d/disable-seat-monitoring.conf > /dev/null << 'EOF'
+wireplumber.profiles = {
+  main = {
+    monitor.bluez.seat-monitoring = disabled
+  }
+}
+EOF
+```
+
+If you're using the autostart service, also make sure `XDG_RUNTIME_DIR` is set in the service and that user linger is enabled (both are handled automatically by the latest `install.sh`).
+
+A reboot after setup ensures all services start in the correct order.
+
 ### Update
 
 To update to the latest release on Raspberry Pi please follow these steps (your settings will be retained):

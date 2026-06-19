@@ -15,6 +15,7 @@ struct ModuleEntry {
     QString entryQml;    // relative to module folder, e.g. "views/Root.qml"
     QString iconRel;     // relative to module folder, e.g. "assets/images/logo.svg"
     QVariantList settings;
+    bool mainMenu = true; // false → accessible only via Settings, not the main module list
 };
 
 class AppCore : public QObject {

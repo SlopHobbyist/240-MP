@@ -14,6 +14,8 @@
 #include "modules/local_files/LocalFilesBackend.h"
 #include "modules/plex/PlexBackend.h"
 #include "modules/ambient_mode/AmbientModeBackend.h"
+#include "modules/network/NetworkBackend.h"
+#include "modules/bluetooth/BluetoothBackend.h"
 #include "player/MpvController.h"
 #include "input/InputManager.h"
 #ifdef Q_OS_MAC
@@ -79,6 +81,8 @@ int main(int argc, char *argv[]) {
     LocalFilesBackend   localFiles(appRoot, dataRoot);
     PlexBackend         plexBackend(appRoot, dataRoot);
     AmbientModeBackend  ambientMode(dataRoot);
+    NetworkBackend      networkBackend;
+    BluetoothBackend    bluetoothBackend;
     MpvController       mpvController(appRoot, &appCore);
     InputManager        inputManager(dataRoot);
 
@@ -94,6 +98,8 @@ int main(int argc, char *argv[]) {
     appCore.registerModule("com.240mp.local_files",  "localFilesBackend",  &localFiles,  ctx);
     appCore.registerModule("com.240mp.plex",         "plexBackend",        &plexBackend, ctx);
     appCore.registerModule("com.240mp.ambient_mode", "ambientModeBackend", &ambientMode, ctx);
+    appCore.registerModule("com.240mp.network",      "networkBackend",     &networkBackend, ctx);
+    appCore.registerModule("com.240mp.bluetooth",    "bluetoothBackend",   &bluetoothBackend, ctx);
 
     ctx->setContextProperty("appCore",       &appCore);
     ctx->setContextProperty("mpvController", &mpvController);

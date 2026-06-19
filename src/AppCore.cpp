@@ -40,6 +40,7 @@ AppCore::AppCore(const QString &appRoot, const QString &dataRoot, QObject *paren
         m.entryQml = entryQml;
         m.iconRel  = manifest["icon"].toString();
         m.settings = manifest["settings"].toArray().toVariantList();
+        m.mainMenu = manifest.value("main_menu").toBool(true);
         m_modules.append(m);
         qDebug("[AppCore] Loaded manifest: %s", qPrintable(id));
     }
@@ -96,6 +97,10 @@ void AppCore::scan_for_modules() {
         bool enabled = mCfg.contains("enabled") ? mCfg["enabled"].toBool(true) : manifestDefault;
         if (!enabled) {
             qDebug("[AppCore] Module disabled: %s", qPrintable(m.name));
+            continue;
+        }
+        if (!m.mainMenu) {
+            qDebug("[AppCore] Module is settings-only: %s", qPrintable(m.name));
             continue;
         }
         // entry_point is a path relative to APP_ROOT
@@ -272,10 +277,13 @@ QString AppCore::get_module_auth_state(const QString &moduleId) {
 QVariant AppCore::get_installed_modules() {
     QVariantList result;
     for (const auto &m : m_modules) {
+        QString entryPoint = QStringLiteral("modules/%1/%2").arg(m.folder, m.entryQml);
         result.append(QVariantMap{
             {"id",           m.id},
             {"name",         m.name},
-            {"has_settings", !m.settings.isEmpty()}
+            {"has_settings", !m.settings.isEmpty()},
+            {"main_menu",    m.mainMenu},
+            {"entry_point",  entryPoint}
         });
     }
     return result;

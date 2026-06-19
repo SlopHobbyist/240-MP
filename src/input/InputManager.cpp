@@ -178,6 +178,8 @@ void InputManager::loadDefaultMapping() {
     m_buttonMap[SDL_CONTROLLER_BUTTON_START]         = Action::PlayPause;
     m_buttonMap[SDL_CONTROLLER_BUTTON_LEFTSHOULDER]  = Action::Left;
     m_buttonMap[SDL_CONTROLLER_BUTTON_RIGHTSHOULDER] = Action::Right;
+    m_buttonMap[SDL_CONTROLLER_BUTTON_X]             = Action::Option1;
+    m_buttonMap[SDL_CONTROLLER_BUTTON_Y]             = Action::Option2;
     m_axisMap[SDL_CONTROLLER_AXIS_LEFTX] = { Action::Left, Action::Right };
     m_axisMap[SDL_CONTROLLER_AXIS_LEFTY] = { Action::Up,   Action::Down  };
 }
@@ -191,6 +193,8 @@ InputManager::Action InputManager::actionFromString(const QString &name, bool *o
     if (name == "select")     return Action::Select;
     if (name == "back")       return Action::Back;
     if (name == "play_pause" || name == "playpause") return Action::PlayPause;
+    if (name == "option1")    return Action::Option1;
+    if (name == "option2")    return Action::Option2;
     if (name == "none")       return Action::None;
     *ok = false;
     return Action::None;
@@ -448,6 +452,8 @@ int InputManager::qtKeyForAction(Action a) {
     case Action::Select:    return Qt::Key_Return;
     case Action::Back:      return Qt::Key_Escape;
     case Action::PlayPause: return Qt::Key_Space;
+    case Action::Option1:   return Qt::Key_F5;
+    case Action::Option2:   return Qt::Key_Delete;
     case Action::None:      break;
     }
     return 0;
@@ -463,6 +469,8 @@ QString InputManager::mpvKeyForAction(Action a) {
     case Action::Select:    return QStringLiteral("ENTER");
     case Action::Back:      return QStringLiteral("ESC");
     case Action::PlayPause: return QStringLiteral("SPACE");
+    case Action::Option1:   return QStringLiteral("F5");
+    case Action::Option2:   return QStringLiteral("DEL");
     case Action::None:      break;
     }
     return QString();
@@ -614,6 +622,8 @@ void InputManager::updateHints() {
     h["back"]       = QStringLiteral("[ESC]");
     h["select"]     = QStringLiteral("[ENTER]");
     h["play_pause"] = QStringLiteral("[SPACE]");
+    h["option1"]    = QStringLiteral("[R]");
+    h["option2"]    = QStringLiteral("[D]");
 
     if (m_lastInputDevice == QStringLiteral("gamepad")) {
         const auto buttonLabel = [this](Action a) -> QString {
@@ -629,9 +639,13 @@ void InputManager::updateHints() {
         const QString back = buttonLabel(Action::Back);
         const QString select = buttonLabel(Action::Select);
         const QString playPause = buttonLabel(Action::PlayPause);
+        const QString option1 = buttonLabel(Action::Option1);
+        const QString option2 = buttonLabel(Action::Option2);
         if (!back.isEmpty())      h["back"]       = back;
         if (!select.isEmpty())    h["select"]     = select;
         if (!playPause.isEmpty()) h["play_pause"] = playPause;
+        if (!option1.isEmpty())   h["option1"]    = option1;
+        if (!option2.isEmpty())   h["option2"]    = option2;
     }
 
     if (h != m_hints) {

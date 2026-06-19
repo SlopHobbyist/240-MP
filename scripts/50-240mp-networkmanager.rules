@@ -1,0 +1,9 @@
+// Allow netdev group members to manage NetworkManager (WiFi scan, connect,
+// disconnect, and modify/delete saved connections) without an active desktop
+// session.  Installed by 240-MP's install.sh.
+polkit.addRule(function(action, subject) {
+    if (action.id.indexOf("org.freedesktop.NetworkManager.") === 0 &&
+        subject.isInGroup("netdev")) {
+        return polkit.Result.YES;
+    }
+});

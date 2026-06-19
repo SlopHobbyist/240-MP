@@ -51,18 +51,18 @@ FocusScope {
             moduleId: ""
         })
 
-        // MODULES section — only show modules with has_settings
+        // MODULES section — show modules with settings or settings-only modules
         var hasModuleSettings = false
         for (var i = 0; i < installedModules.length; i++) {
-            if (installedModules[i].has_settings) { hasModuleSettings = true; break }
+            if (installedModules[i].has_settings || !installedModules[i].main_menu) { hasModuleSettings = true; break }
         }
 
         if (hasModuleSettings) {
             items.push({ type: "section", label: "Modules:" })
             for (var j = 0; j < installedModules.length; j++) {
                 var m = installedModules[j]
-                if (m.has_settings) {
-                    items.push({ type: "submenu", label: m.name, moduleId: m.id })
+                if (m.has_settings || !m.main_menu) {
+                    items.push({ type: "submenu", label: m.name, moduleId: m.id, entry_point: m.entry_point || "", main_menu: m.main_menu !== false })
                 }
             }
         }
@@ -170,7 +170,11 @@ FocusScope {
         Keys.onReturnPressed: {
             var row = settingsItems[currentIndex]
             if (row && row.type === "submenu") {
-                settingsRoot.navigateTo("views/ModuleSettings.qml", { moduleId: row.moduleId }, { currentIndex: settingsList.currentIndex })
+                if (!row.main_menu && row.entry_point) {
+                    settingsRoot.navigateTo(row.entry_point, {}, { currentIndex: settingsList.currentIndex })
+                } else {
+                    settingsRoot.navigateTo("views/ModuleSettings.qml", { moduleId: row.moduleId }, { currentIndex: settingsList.currentIndex })
+                }
             } else if (row && row.type === "quit") {
                 settingsRoot.quitChoiceIndex = 0
                 settingsRoot.quitOverlayVisible = true

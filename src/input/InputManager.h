@@ -53,7 +53,7 @@ private slots:
     void onDataDirChanged(const QString &path);
 
 private:
-    enum class Action { None, Up, Down, Left, Right, Select, Back, PlayPause };
+    enum class Action { None, Up, Down, Left, Right, Select, Back, PlayPause, Option1, Option2 };
 
     void initSdl();
     void openController(int deviceIndex);
