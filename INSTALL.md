@@ -174,13 +174,15 @@ However, if you already have Raspberry Pi OS set up and working on your TV then 
     - Expand filesystem: `Advanced Options > Expand Filesystem > Yes`
     - Select Finish and allow the Raspberry Pi to reboot
 
-5) After that completes SSH in again and run the following to install the latest version of 240-MP
+5) After that completes SSH in again and run the following to install 240-MP from source
 
     ```bash
-    bash <(curl -fsSL https://github.com/anthonycaccese/240-mp/releases/latest/download/install.sh)
+    bash <(curl -fsSL https://raw.githubusercontent.com/SlopHobbyist/240-MP/main/scripts/install-from-source.sh)
     ```
 
-    This will install all of the needed dependencies (note: over WiFi it will take about 20 mins to complete) 
+    This will install all dependencies, clone the repo, build from source, and install. (Note: over WiFi it will take about 20-30 mins to complete as it includes compilation.)
+
+    To update to the latest version later, just run the same command again — it will pull the latest changes and rebuild.
 
     **Optional** 
     - You will get an option at the end of the install script that asks: `Install systemd autostart service? [y/N]` 
@@ -233,7 +235,7 @@ To update to the latest release on Raspberry Pi please follow these steps (your 
 1) SSH into your Raspberry Pi
 2) Re-run the install script
     ```bash
-    bash <(curl -fsSL https://github.com/anthonycaccese/240-mp/releases/latest/download/install.sh)
+    bash <(curl -fsSL https://raw.githubusercontent.com/SlopHobbyist/240-MP/main/scripts/install-from-source.sh)
     ```
 3) When it asks to "`Install systemd autostart service? [y/N]`"
     - If you already have autostart set up you can press either Y or N, it will keep your current autostart
